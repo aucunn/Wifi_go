@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         insertToDatabase(id, pass);
 
-        if(ok=true) {
+        if(ok == true) {
             Intent intent = new Intent(getApplicationContext(), Regist.class);
             startActivity(intent);
         }
@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     String id = (String)params[0];
                     String pass = (String)params[1];
-                    String name = (String)params[2];
 
                     String link = "https://www.mysterlee.com/wifigo/login.php";
                     String data = URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(id, "UTF-8");
