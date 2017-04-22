@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 /**
  * Created by aucun on 2017-04-22.
@@ -31,17 +32,20 @@ public class GpsInfo extends Service implements LocationListener{
 
     private static final long MIN_DISTANCE_UPDATES = 10;
 
-    private static final long MIN_TIME_UPDATES = 1000 * 60 * 1;
+    private static final long MIN_TIME_UPDATES = 1000 * 1;
 
     protected LocationManager mlocationManager;
 
     public GpsInfo(Context mContext) {
         this.mContext = mContext;
+
         getLocation();
     }
 
     public Location getLocation() {
         try {
+            Toast.makeText(getApplicationContext(), "GGPPSS", Toast.LENGTH_LONG).show();
+
             mlocationManager = (LocationManager)mContext.getSystemService(LOCATION_SERVICE);
 
             isGPSEnabled = mlocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
