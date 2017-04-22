@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.mysterlee.www.MapsActivity;
+import com.mysterlee.www.Regist;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +27,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickLogin(View v) {
-        Intent intent_01 = new Intent(getApplicationContext(), MapsActivity.class);
-        startActivity(intent_01);
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        startActivity(intent);
     }
+
+    public void onClickRegist(View v) {
+        Intent intent = new Intent(getApplicationContext(), Regist.class);
+        startActivity(intent);
+    }
+
 }
