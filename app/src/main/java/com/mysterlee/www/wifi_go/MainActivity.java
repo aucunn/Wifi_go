@@ -32,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickRegist(View v) {
-        Intent intent = new Intent(getApplicationContext(), Regist.class);
-        startActivity(intent);
+        Intent intent1 = new Intent(getApplicationContext(), Regist.class);
+        startActivity(intent1);
     }
 
 }

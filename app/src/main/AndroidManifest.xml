@@ -37,11 +37,10 @@
 
         <activity
             android:name="com.mysterlee.www.MapsActivity"
-            android:label="@string/title_activity_maps" ></activity>
-        <activity android:name="com.mysterlee.www.Regist">
+            android:label="@string/title_activity_maps" />
+        <activity android:name="com.mysterlee.www.Regist"></activity>
+        <activity android:name="com.mysterlee.www.LoginActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
