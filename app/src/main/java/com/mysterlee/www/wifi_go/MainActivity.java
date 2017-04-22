@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         insertToDatabase(id, pass);
 
-        if(ok == true) {
+        if(ok = true) {
             Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
             startActivity(intent);
         }
