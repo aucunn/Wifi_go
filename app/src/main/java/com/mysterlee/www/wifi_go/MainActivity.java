@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.mysterlee.www.MapsActivity;
 import com.mysterlee.www.Regist;
@@ -36,20 +37,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickLogin(View v) {
-        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-        startActivity(intent);
-    }
-
-    public void onClickRegist(View v) {
         String id = editTextId.getText().toString();
         String pass = editTextPass.getText().toString();
 
         insertToDatabase(id, pass);
 
         if(ok == true) {
-            Intent intent = new Intent(getApplicationContext(), Regist.class);
+            Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
             startActivity(intent);
         }
+    }
+
+    public void onClickRegist(View v) {
+
+        Intent intent = new Intent(getApplicationContext(), Regist.class);
+        startActivity(intent);
     }
 
     private void insertToDatabase(String id, String pass) {
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
-
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         sb.append(line);
                         break;
                     }
-                    if(sb.toString() == "success")
+                    if( Integer.parseInt(sb.toString()) == 1)
                     {
                         ok = true;
                     }
