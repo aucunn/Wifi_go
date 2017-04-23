@@ -1,10 +1,12 @@
 package com.mysterlee.www;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,13 +14,15 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
+import android.support.v4.content.ContextCompat;
 
 /**
  * Created by aucun on 2017-04-22.
  */
 
 public class GpsInfo extends Service implements LocationListener{
+
+
 
     private final Context mContext;
 
@@ -32,49 +36,54 @@ public class GpsInfo extends Service implements LocationListener{
 
     private static final long MIN_DISTANCE_UPDATES = 10;
 
-    private static final long MIN_TIME_UPDATES = 1000 * 1;
+    private static final long MIN_TIME_UPDATES = 1000;
 
     protected LocationManager mlocationManager;
 
     public GpsInfo(Context mContext) {
         this.mContext = mContext;
 
+
         getLocation();
     }
 
     public Location getLocation() {
         try {
-            Toast.makeText(getApplicationContext(), "GGPPSS", Toast.LENGTH_LONG).show();
 
-            mlocationManager = (LocationManager)mContext.getSystemService(LOCATION_SERVICE);
+
+
+
+            mlocationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
             isGPSEnabled = mlocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
             isNetworkEnabled = mlocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            if (isGPSEnabled || isNetworkEnabled){
+            if (isGPSEnabled || isNetworkEnabled) {
                 this.isGetLocation = true;
-                if (isNetworkEnabled){
+
+
+                if (isNetworkEnabled) {
                     mlocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_UPDATES, MIN_DISTANCE_UPDATES, this);
 
-                    if (mlocationManager != null){
+                    if (mlocationManager != null) {
                         mlocation = mlocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-                        if (mlocation != null){
+                        if (mlocation != null) {
                             lat = mlocation.getLatitude();
                             lon = mlocation.getLongitude();
                         }
                     }
                 }
 
-                if (isGPSEnabled){
-                    if (mlocation == null){
+                if (isGPSEnabled) {
+                    if (mlocation == null) {
                         mlocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_UPDATES, MIN_DISTANCE_UPDATES, this);
 
                         if (mlocation != null) {
                             mlocation = mlocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                            if (mlocation != null){
+                            if (mlocation != null) {
                                 lat = mlocation.getLatitude();
                                 lon = mlocation.getLongitude();
                             }
@@ -82,6 +91,7 @@ public class GpsInfo extends Service implements LocationListener{
                     }
                 }
             }
+
 
         }
         catch (Exception e){
@@ -103,7 +113,7 @@ public class GpsInfo extends Service implements LocationListener{
         return lat;
     }
 
-    public double getongitude(){
+    public double getLongitude(){
         if (mlocation != null){
             lon = mlocation.getLongitude();
         }
@@ -144,7 +154,8 @@ public class GpsInfo extends Service implements LocationListener{
 
     @Override
     public void onLocationChanged(Location location) {
-
+        lat = location.getLatitude();
+        lon = location.getLongitude();
     }
 
     @Override
