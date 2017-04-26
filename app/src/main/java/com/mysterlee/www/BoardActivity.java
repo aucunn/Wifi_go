@@ -1,4 +1,4 @@
-package com.mysterlee.www.wifi_go;
+package com.mysterlee.www;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import com.mysterlee.www.BoardActivity;
-import com.mysterlee.www.Regist;
+import com.mysterlee.www.wifi_go.R;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -18,43 +18,37 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-public class MainActivity extends AppCompatActivity {
+public class BoardActivity extends AppCompatActivity {
 
-    private EditText editTextId;
-    private EditText editTextPass;
-    private int num;
+    private String num;
+    private EditText editTextTitle;
+    private EditText editTextcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_board);
 
-        editTextId = (EditText)findViewById(R.id.editId);
-        editTextPass = (EditText)findViewById(R.id.editPass);
+        Intent intent = getIntent();
+        num = intent.getStringExtra("num");
+
+        editTextTitle = (EditText)findViewById(R.id.editTitle);
+        editTextcon = (EditText)findViewById(R.id.editCon);
+
 
     }
 
-    public void onClickLogin(View v) {
-        String id = editTextId.getText().toString();
-        String pass = editTextPass.getText().toString();
+    public void onClickSubmit(View view){
 
-        insertToDatabase(id, pass);
 
-        if(num >= 1) {
-            Intent intent = new Intent(this, BoardActivity.class);
-            intent.putExtra("num", String.valueOf(num));
-            //Toast.makeText(getApplicationContext(), String.valueOf(num), Toast.LENGTH_LONG).show();
-            startActivity(intent);
-        }
+        String title = editTextTitle.getText().toString();
+        String con = editTextcon.getText().toString();
+
+        insertToDatabase(title, con);
+
     }
 
-    public void onClickRegist(View v) {
-
-        Intent intent = new Intent(getApplicationContext(), Regist.class);
-        startActivity(intent);
-    }
-
-    private void insertToDatabase(String id, String pass) {
+    private void insertToDatabase(String title, String con) {
 
         class InsertData extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
@@ -63,25 +57,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected  void  onPreExecute() {
                 super.onPreExecute();
-                loading = ProgressDialog.show(MainActivity.this, "Please Wait", null, true, true);
+                loading = ProgressDialog.show(BoardActivity.this, "Please Wait", null, true, true);
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
             }
 
             @Override
             protected  String doInBackground(String... params) {
 
                 try {
-                    String id = (String)params[0];
-                    String pass = (String)params[1];
+                    String title = (String)params[0];
+                    String con = (String)params[1];
 
-                    String link = "https://www.mysterlee.com/wifigo/login.php";
-                    String data = URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(id, "UTF-8");
-                    data += "&" + URLEncoder.encode("pass", "UTF-8") + "=" + URLEncoder.encode(pass, "UTF-8");
+
+                    String link = "https://www.mysterlee.com/wifigo/submit.php";
+                    String data = URLEncoder.encode("no", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
+                    data += "&" + URLEncoder.encode("title", "UTF-8") + "=" + URLEncoder.encode(title, "UTF-8");
+                    data += "&" + URLEncoder.encode("con", "UTF-8") + "=" + URLEncoder.encode(con, "UTF-8");
 
                     URL url = new URL(link);
                     URLConnection conn = url.openConnection();
@@ -101,9 +98,6 @@ public class MainActivity extends AppCompatActivity {
                         sb.append(line);
                         break;
                     }
-                    num = Integer.parseInt(sb.toString());
-
-
                     return sb.toString();
 
                 }
@@ -115,12 +109,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         InsertData task = new InsertData();
-        task.execute(id, pass);
+        task.execute(title, con);
 
     }
-
-
-
-
 
 }
