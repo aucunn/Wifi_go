@@ -41,7 +41,11 @@
             android:name="com.mysterlee.www.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name="com.mysterlee.www.Regist" />
-        <activity android:name="com.mysterlee.www.BoardActivity"></activity>
+        <activity android:name="com.mysterlee.www.BoardActivity" />
+        <activity
+            android:name="com.mysterlee.www.NaviActivity"
+            android:label="@string/title_activity_navi"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

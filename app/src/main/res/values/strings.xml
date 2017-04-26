@@ -3,5 +3,11 @@
     <string name="textLoging">로그인</string>
     <string name="textRegist">회원가입</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_navi">NaviActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 
 </resources>

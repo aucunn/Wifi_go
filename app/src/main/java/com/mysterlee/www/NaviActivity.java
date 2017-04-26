@@ -1,11 +1,19 @@
 package com.mysterlee.www;
 
 import android.Manifest;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,7 +33,9 @@ import com.mysterlee.www.wifi_go.R;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+public class NaviActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
@@ -40,38 +50,112 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String LOCATION = "location";
     private CameraPosition mCameraPosition;
 
-
+    private String num;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_navi);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         if (savedInstanceState != null){
             mCurrentLocation = savedInstanceState.getParcelable(LOCATION);
             mCameraPosition = savedInstanceState.getParcelable(CAMERA_POSITION);
         }
 
-        setContentView(R.layout.activity_maps);
+        //setContentView(R.layout.activity_maps);
 
         buildGoogleApiClient();
         mGoogleApiClient.connect();
 
+        /*
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        */
 
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        Intent intent = getIntent();
+        num = intent.getStringExtra("num");
 
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.navi, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_state) {
+
+        }
+        else if (id == R.id.nav_quest){
+
+        }
+        else if (id == R.id.nav_board) {
+            Intent intent = new Intent(getApplicationContext(), BoardActivity.class);
+            intent.putExtra("num", num);
+            startActivity(intent);
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @SuppressWarnings("MissingPermission")
+    private void updatesLocation() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocetionRequset, this);
+    }
+
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
@@ -81,7 +165,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else if (mCurrentLocation != null){
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mCurrentLocation.getLatitude(),
-                    mCurrentLocation.getLongitude()), 16));
+                            mCurrentLocation.getLongitude()), 16));
         }
         else {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(25.3, 34.3), 16));
@@ -96,25 +180,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add a marker in Sydney and move the camera
 
     }
-    @SuppressWarnings("MissingPermission")
-    private void locationUpdata() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocetionRequset, this);
-    }
+
     @SuppressWarnings("MissingPermission")
     PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
-            Toast.makeText(MapsActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NaviActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
 
             mLocationPermission = true;
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            locationUpdata();
+            updatesLocation();
             //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocetionRequset, this);
         }
 
         @Override
         public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-            Toast.makeText(MapsActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(NaviActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
         }
 
 
@@ -186,6 +267,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
 
         mCurrentLocation = location;
+        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
     }
 
