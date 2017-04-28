@@ -45,7 +45,8 @@
         <activity
             android:name="com.mysterlee.www.NaviActivity"
             android:label="@string/title_activity_navi"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name="com.mysterlee.www.QuestActivity"></activity>
     </application>
 
 </manifest>
