@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         insertToDatabase(id, pass);
 
-        if(num >= 1 || true) {
+        if(num >= 1) {
             Intent intent = new Intent(this, NaviActivity.class);
             intent.putExtra("num", String.valueOf(num));
             //Toast.makeText(getApplicationContext(), String.valueOf(num), Toast.LENGTH_LONG).show();

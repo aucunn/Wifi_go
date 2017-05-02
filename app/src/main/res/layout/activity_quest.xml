@@ -6,14 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.mysterlee.www.QuestActivity">
 
-    <LinearLayout
-        android:id="@+id/questLayout"
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp">
-
-    </LinearLayout>
-
+        android:id="@+id/questList"/>
 </android.support.constraint.ConstraintLayout>

@@ -139,7 +139,7 @@ public class NaviActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_quest){
             Intent intent = new Intent(getApplicationContext(), QuestActivity.class);
-            //intent.putExtra("num", num);
+            intent.putExtra("num", num);
             startActivity(intent);
         }
         else if (id == R.id.nav_board) {

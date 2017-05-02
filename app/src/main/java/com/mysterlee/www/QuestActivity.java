@@ -1,23 +1,57 @@
 package com.mysterlee.www;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.mysterlee.www.wifi_go.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class QuestActivity extends AppCompatActivity {
+
+    private String num;
+    /*
+
+    private String[] name;
+    private String[] con;
+    private String[] reward;
+    */
+    ArrayList<HashMap<String, String>> questList;
+    ListView list;
+    String myJson;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quest);
 
+        list = (ListView)findViewById(R.id.questList);
+        questList = new ArrayList<HashMap<String, String>>();
+
+        Intent intent = getIntent();
+        num = intent.getStringExtra("num");
+
+        insertToDatabase(num);
+        /*
         DisplayMetrics outMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
         int dpi = ((outMetrics.densityDpi)/160);
@@ -31,7 +65,10 @@ public class QuestActivity extends AppCompatActivity {
 
 
 
-        for(int i=0; i < 미완료퀘스트수; i++) {
+
+        insertToDatabase(num);
+
+        for(int i=0; i < no; i++) {
             LinearLayout horizon = new LinearLayout(this);
             horizon.setOrientation(LinearLayout.HORIZONTAL);
             horizon.setLayoutParams(horizonParam);
@@ -47,23 +84,23 @@ public class QuestActivity extends AppCompatActivity {
 
 
             TextView questTitle = new TextView(this);
-            questTitle.setText("퀘스트 제목");
+            questTitle.setText(name[i]);
             questTitle.setTextSize(26);
             leftLyout.addView(questTitle);
 
             TextView questCon = new TextView(this);
-            questCon.setText("퀘스트 내용\n두줄\n세줄");
+            questCon.setText(con[i]);
             questTitle.setTextSize(16);
             leftLyout.addView(questCon);
 
             TextView questRe = new TextView(this);
-            questRe.setText("보상\n두줄\n세줄");
+            questRe.setText(reward[i]);
             rightLyout.addView(questRe);
 
             Button btn = new Button(this);
             btn.setText("완료");
             rightLyout.addView(btn);
-
+/*
             btn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if (true){//퀘스트 완료체크
@@ -73,12 +110,128 @@ public class QuestActivity extends AppCompatActivity {
                     }
                 }
             });
-
+*//*
 
             linearLayout.addView(horizon);
             horizon.addView(leftLyout);
             horizon.addView(rightLyout);
         }
 
+        */
     }
+
+    protected void showList(){
+        try{
+
+            JSONObject jsonObj = new JSONObject(myJson);
+            JSONArray var = jsonObj.getJSONArray("quest");
+
+            int no = var.length();
+/*
+                    name = new String[no];
+                    con = new String[no];
+                    reward = new String[no];
+*/
+            for(int j = 0; j < no; j++ )
+            {
+                JSONObject c = var.getJSONObject(j);
+                        /*
+                        name[j] = c.getString("name");
+                        con[j] = c.getString("con");
+                        reward[j] = c.getString("reward");
+                        */
+                String name = c.getString("name");
+                String con = c.getString("con");
+                String reward = c.getString("reward");
+
+                HashMap<String, String> quest = new HashMap<String, String>();
+
+                quest.put("name", name);
+                quest.put("con", con);
+                quest.put("reward", reward);
+
+                questList.add(quest);
+            }
+
+            ListAdapter adapter = new SimpleAdapter(QuestActivity.this,
+                    questList, R.layout.quest_list,
+                    new String[]{"name", "con", "reward"},
+                    new int[]{R.id.questName, R.id.questCon, R.id.questReward}
+            );
+
+            list.setAdapter(adapter);
+
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void insertToDatabase(String num) {
+
+        class InsertData extends AsyncTask<String, Void, String> {
+            ProgressDialog loading;
+
+/*
+            @Override
+            protected  void  onPreExecute() {
+                super.onPreExecute();
+                loading = ProgressDialog.show(QuestActivity.this, "Please Wait", null, true, true);
+            }
+*/
+            @Override
+            protected void onPostExecute(String s) {
+                /*
+                super.onPostExecute(s);
+                loading.dismiss();
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+*/
+                myJson = s;
+                showList();
+            }
+
+            @Override
+            protected  String doInBackground(String... params) {
+
+                try {
+                    String num = (String)params[0];
+
+                    String link = "https://www.mysterlee.com/wifigo/quest.php";
+                    String data = URLEncoder.encode("no", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                    wr.write(data);
+                    wr.flush();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line+"\n");
+                    }
+
+
+                    return sb.toString().trim();
+
+                }
+                catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+            }
+
+        }
+
+        InsertData task = new InsertData();
+        task.execute(num);
+
+    }
+
+
 }
