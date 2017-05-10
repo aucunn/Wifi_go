@@ -1,8 +1,10 @@
 package com.mysterlee.www;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,12 +27,24 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.mysterlee.www.wifi_go.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class NaviActivity extends AppCompatActivity
@@ -51,6 +65,8 @@ public class NaviActivity extends AppCompatActivity
     private CameraPosition mCameraPosition;
 
     private String num;
+
+    String myJson;
 
 
     @Override
@@ -160,6 +176,10 @@ public class NaviActivity extends AppCompatActivity
 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        insertToDatabase("10");
+
+
 
         if (mCameraPosition != null){
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
@@ -304,5 +324,98 @@ public class NaviActivity extends AppCompatActivity
         }
         super.onResume();
     }
+
+    protected void makeMarker(){
+        try{
+
+            JSONObject jsonObj = new JSONObject(myJson);
+            JSONArray var = jsonObj.getJSONArray("wifi");
+
+            int no = var.length();
+
+            for(int j = 0; j < no; j++ )
+            {
+                JSONObject c = var.getJSONObject(j);
+
+                String name = c.getString("name");
+                String con = c.getString("con");
+                String reward = c.getString("pass");
+
+                Double n = c.getDouble("n");
+                Double e = c.getDouble("e");
+
+                if(c.getString("var").equals("1"))
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                else
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name));
+
+
+
+            }
+
+
+
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private void insertToDatabase(String num) {
+
+        class InsertData extends AsyncTask<String, Void, String> {
+            ProgressDialog loading;
+
+            protected void onPostExecute(String s) {
+
+                myJson = s;
+                makeMarker();
+            }
+
+            @Override
+            protected  String doInBackground(String... params) {
+
+                try {
+                    String num = (String)params[0];
+
+                    String link = "https://www.mysterlee.com/wifigo/wifi.php";
+                    String data = URLEncoder.encode("no", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                    wr.write(data);
+                    wr.flush();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line+"\n");
+                    }
+
+
+                    return sb.toString().trim();
+
+                }
+                catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+            }
+
+        }
+
+        InsertData task = new InsertData();
+        task.execute(num);
+
+    }
+
+
 
 }
