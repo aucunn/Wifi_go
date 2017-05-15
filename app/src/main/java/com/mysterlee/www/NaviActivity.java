@@ -30,6 +30,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -109,6 +110,8 @@ public class NaviActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         num = intent.getStringExtra("num");
+
+
 
     }
 
@@ -333,6 +336,8 @@ public class NaviActivity extends AppCompatActivity
 
             int no = var.length();
 
+            final Intent intent = new Intent(this, WifiActivity.class);
+
             for(int j = 0; j < no; j++ )
             {
                 JSONObject c = var.getJSONObject(j);
@@ -344,14 +349,33 @@ public class NaviActivity extends AppCompatActivity
                 Double n = c.getDouble("n");
                 Double e = c.getDouble("e");
 
+
                 if(c.getString("var").equals("1"))
                     mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 else
                     mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name));
 
 
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+
+
+                        intent.putExtra("lat", marker.getPosition().latitude);
+                        intent.putExtra("lon", marker.getPosition().longitude);
+                        startActivity(intent);
+                        return false;
+                    }
+                });
+
+
+
+
+
 
             }
+
+
 
 
 
@@ -415,6 +439,8 @@ public class NaviActivity extends AppCompatActivity
         task.execute(num);
 
     }
+
+
 
 
 
