@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -53,7 +55,10 @@ public class NaviActivity extends AppCompatActivity
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener,
+        GoogleMap.OnCameraIdleListener,
+        GoogleMap.OnMapLongClickListener
+{
 
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
@@ -67,6 +72,8 @@ public class NaviActivity extends AppCompatActivity
 
     private String num;
 
+    protected LocationManager locationManager;
+
     String myJson;
 
 
@@ -76,6 +83,8 @@ public class NaviActivity extends AppCompatActivity
         setContentView(R.layout.activity_navi);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
         if (savedInstanceState != null){
             mCurrentLocation = savedInstanceState.getParcelable(LOCATION);
@@ -110,6 +119,8 @@ public class NaviActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         num = intent.getStringExtra("num");
+
+
 
 
 
@@ -182,6 +193,8 @@ public class NaviActivity extends AppCompatActivity
 
         insertToDatabase("10");
 
+        UiSettings uiSettings = mMap.getUiSettings();
+        uiSettings.setZoomControlsEnabled(true);
 
 
         if (mCameraPosition != null){
@@ -200,6 +213,9 @@ public class NaviActivity extends AppCompatActivity
 
 
         updateLocationUI();
+
+        mMap.setOnCameraIdleListener(this);
+        mMap.setOnMapLongClickListener(this);
 
 
         // Add a marker in Sydney and move the camera
@@ -291,9 +307,9 @@ public class NaviActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
-        mCurrentLocation = location;
-        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        //mCurrentLocation = location;
+        //LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
     }
 
@@ -336,7 +352,7 @@ public class NaviActivity extends AppCompatActivity
 
             int no = var.length();
 
-            final Intent intent = new Intent(this, WifiActivity.class);
+            final Intent intent = new Intent(this, WifiInfoActivity.class);
 
             for(int j = 0; j < no; j++ )
             {
@@ -441,7 +457,17 @@ public class NaviActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onCameraIdle() {
+
+        Toast.makeText(NaviActivity.this, "움직임", Toast.LENGTH_SHORT).show();
+
+    }
 
 
-
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+        Intent intent = new Intent(getApplicationContext(), MakerActivity.class);
+        startActivity(intent);
+    }
 }

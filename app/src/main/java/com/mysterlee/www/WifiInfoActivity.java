@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,23 +18,31 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-public class WifiActivity extends AppCompatActivity {
+public class WifiInfoActivity extends AppCompatActivity {
 
     private double lat;
     private double lon;
     private String name;
     private String pass;
 
+
+    private WebView webView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wifi);
+        setContentView(R.layout.activity_wifi_info);
 
         Intent intent = getIntent();
         lat = intent.getDoubleExtra("lat", 0);
         lon = intent.getDoubleExtra("lon", 0);
 
         insertToDatabase(String.valueOf(lat), String.valueOf(lon));
+
+        webView = (WebView)findViewById(R.id.webView);
+
+        String image = "http://imgnews.naver.com/image/112/2005/11/25/200511250023.gif";
+        webView.loadUrl(image);
 
 
 /*
@@ -71,13 +80,13 @@ public class WifiActivity extends AppCompatActivity {
             @Override
             protected  void  onPreExecute() {
                 super.onPreExecute();
-                loading = ProgressDialog.show(WifiActivity.this, "Please Wait", null, true, true);
+                loading = ProgressDialog.show(WifiInfoActivity.this, "Please Wait", null, true, true);
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                Toast.makeText(WifiActivity.this, s, Toast.LENGTH_SHORT).show();
+                Toast.makeText(WifiInfoActivity.this, s, Toast.LENGTH_SHORT).show();
                 loading.dismiss();
             }
 

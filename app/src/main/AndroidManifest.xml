@@ -37,9 +37,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name="com.mysterlee.www.MapsActivity"
-            android:label="@string/title_activity_maps" />
         <activity android:name="com.mysterlee.www.Regist" />
         <activity android:name="com.mysterlee.www.BoardActivity" />
         <activity
@@ -47,7 +44,11 @@
             android:label="@string/title_activity_navi"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.mysterlee.www.QuestActivity" />
-        <activity android:name="com.mysterlee.www.WifiActivity"></activity>
+        <activity android:name="com.mysterlee.www.MakerActivity" />
+        <activity
+            android:name="com.mysterlee.www.WifiInfoActivity"
+            android:label="@string/title_activity_wifi_info"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

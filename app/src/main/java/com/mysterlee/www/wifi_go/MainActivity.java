@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.mysterlee.www.NaviActivity;
 import com.mysterlee.www.Regist;
@@ -40,11 +41,17 @@ public class MainActivity extends AppCompatActivity {
 
         insertToDatabase(id, pass);
 
+
+    }
+
+    public void login(){
         if(num >= 1) {
             Intent intent = new Intent(this, NaviActivity.class);
             intent.putExtra("num", String.valueOf(num));
-            //Toast.makeText(getApplicationContext(), String.valueOf(num), Toast.LENGTH_LONG).show();
             startActivity(intent);
+        }
+        else{
+            Toast.makeText(this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -63,13 +70,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected  void  onPreExecute() {
                 super.onPreExecute();
-                loading = ProgressDialog.show(MainActivity.this, "Please Wait", null, true, true);
+                loading = ProgressDialog.show(MainActivity.this, "로딩중...", null, true, true);
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
+                login();
             }
 
             @Override

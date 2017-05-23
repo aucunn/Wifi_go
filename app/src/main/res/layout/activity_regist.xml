@@ -9,7 +9,7 @@
     tools:layout_editor_absoluteX="0dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -59,6 +59,29 @@
 
             <EditText
                 android:id="@+id/editRegistPass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPassword" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp">
+
+            <TextView
+                android:id="@+id/textRePass"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="비밀번호 확인"
+                android:textSize="24sp" />
+
+            <EditText
+                android:id="@+id/editRePass"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"

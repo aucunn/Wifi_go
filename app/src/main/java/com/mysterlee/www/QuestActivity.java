@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -161,11 +163,27 @@ public class QuestActivity extends AppCompatActivity {
 
             list.setAdapter(adapter);
 
+            AdapterView.OnItemClickListener qusetComp = new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    //보상관련
+
+                }
+            };
+
+            //list.setOnClickListener((View.OnClickListener) qusetComp);
+
+
         }
         catch (JSONException e){
             e.printStackTrace();
         }
     }
+
+
+
 
     private void insertToDatabase(String num) {
 

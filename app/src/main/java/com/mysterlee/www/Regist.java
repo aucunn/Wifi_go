@@ -1,6 +1,7 @@
 package com.mysterlee.www;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.mysterlee.www.wifi_go.MainActivity;
 import com.mysterlee.www.wifi_go.R;
 
 import java.io.BufferedReader;
@@ -21,6 +23,7 @@ public class Regist extends AppCompatActivity {
 
     private EditText editTextId;
     private EditText editTextPass;
+    private EditText editTextRePass;
     private EditText editTextName;
 
     @Override
@@ -30,17 +33,32 @@ public class Regist extends AppCompatActivity {
 
         editTextId = (EditText)findViewById(R.id.editRegistId);
         editTextPass = (EditText)findViewById(R.id.editRegistPass);
+        editTextRePass = (EditText)findViewById(R.id.editRePass);
         editTextName = (EditText)findViewById(R.id.editRegistName);
+
+        boolean ok = false;
+
 
     }
 
     public void insert(View view) {
         String id = editTextId.getText().toString();
         String pass = editTextPass.getText().toString();
+        String pass2 = editTextRePass.getText().toString();
         String name = editTextName.getText().toString();
 
-        insertToDatabase(id, pass, name);
+        if(pass.equals(pass2)) {
+            insertToDatabase(id, pass, name);
+        }
+        else {
+            Toast.makeText(Regist.this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+
+    private void goLogin(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private void insertToDatabase(String id, String pass, String name) {
@@ -59,7 +77,11 @@ public class Regist extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
-                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                if(s.equals("회원가입 성공")){
+                    goLogin();
+                }
+
             }
 
             @Override
