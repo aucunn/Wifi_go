@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -48,6 +50,8 @@ public class WifiInfoActivity extends AppCompatActivity {
         list = (ListView)findViewById(R.id.replyList);
         replyList = new ArrayList<HashMap<String, String>>();
 
+        editTextId = (EditText)findViewById(R.id.editRegistId);
+
         Intent intent = getIntent();
         lat = intent.getDoubleExtra("lat", 0);
         lon = intent.getDoubleExtra("lon", 0);
@@ -84,6 +88,10 @@ public class WifiInfoActivity extends AppCompatActivity {
     }
 
 
+    public void insert(View view)
+    {
+
+    }
 
 
 
