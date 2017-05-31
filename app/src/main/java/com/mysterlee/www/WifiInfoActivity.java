@@ -6,10 +6,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mysterlee.www.wifi_go.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,14 +23,20 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class WifiInfoActivity extends AppCompatActivity {
 
     private double lat;
     private double lon;
-    private String name;
+    private String id;
     private String pass;
 
+
+    ArrayList<HashMap<String, String>> replyList;
+    ListView list;
+    String myJson;
 
     private WebView webView;
 
@@ -32,6 +44,9 @@ public class WifiInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_info);
+
+        list = (ListView)findViewById(R.id.replyList);
+        replyList = new ArrayList<HashMap<String, String>>();
 
         Intent intent = getIntent();
         lat = intent.getDoubleExtra("lat", 0);
@@ -71,23 +86,30 @@ public class WifiInfoActivity extends AppCompatActivity {
 
 
 
+
+/////////////
+
     private void insertToDatabase(String lat, String lon) {
 
         class InsertData extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
 
-
-            @Override
-            protected  void  onPreExecute() {
-                super.onPreExecute();
-                loading = ProgressDialog.show(WifiInfoActivity.this, "Please Wait", null, true, true);
-            }
-
+            /*
+                        @Override
+                        protected  void  onPreExecute() {
+                            super.onPreExecute();
+                            loading = ProgressDialog.show(QuestActivity.this, "Please Wait", null, true, true);
+                        }
+            */
             @Override
             protected void onPostExecute(String s) {
+                /*
                 super.onPostExecute(s);
-                Toast.makeText(WifiInfoActivity.this, s, Toast.LENGTH_SHORT).show();
                 loading.dismiss();
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+*/
+                myJson = s;
+                showList();
             }
 
             @Override
@@ -98,6 +120,7 @@ public class WifiInfoActivity extends AppCompatActivity {
                     String lon = (String)params[1];
 
                     String link = "https://www.mysterlee.com/wifigo/wifi_data.php";
+
                     String data = URLEncoder.encode("lat", "UTF-8") + "=" + URLEncoder.encode(lat, "UTF-8");
                     data += "&" + URLEncoder.encode("lon", "UTF-8") + "=" + URLEncoder.encode(lon, "UTF-8");
 
@@ -116,17 +139,11 @@ public class WifiInfoActivity extends AppCompatActivity {
                     String line = null;
 
                     while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                        break;
+                        sb.append(line+"\n");
                     }
 
-                    String[] s = sb.toString().split("|");
-                    name = s[0];
-                    pass = s[1];
 
-                    TextView txt = (TextView) findViewById(R.id.textView2);
-
-                    return sb.toString();
+                    return sb.toString().trim();
 
                 }
                 catch (Exception e) {
@@ -140,5 +157,59 @@ public class WifiInfoActivity extends AppCompatActivity {
         task.execute(lat, lon);
 
     }
+
+
+    protected void showList(){
+        try{
+
+            JSONObject jsonObj = new JSONObject(myJson);
+            JSONArray var = jsonObj.getJSONArray("wifi");
+
+            id = jsonObj.getString("id");
+            pass = jsonObj.getString("pass");
+
+
+            TextView txt = (TextView) findViewById(R.id.textView2);
+
+            int no = var.length();
+/*
+                    name = new String[no];
+                    con = new String[no];
+                    reward = new String[no];
+*/
+            for(int j = 0; j < no; j++ )
+            {
+                JSONObject c = var.getJSONObject(j);
+                        /*
+                        name[j] = c.getString("name");
+                        con[j] = c.getString("con");
+                        reward[j] = c.getString("reward");
+                        */
+                String name = c.getString("name");
+                String con = c.getString("con");
+
+                HashMap<String, String> quest = new HashMap<String, String>();
+
+                quest.put("name", name);
+                quest.put("con", con);
+
+                replyList.add(quest);
+            }
+
+            ListAdapter adapter = new SimpleAdapter(WifiInfoActivity.this,
+                    replyList, R.layout.re_wifi,
+                    new String[]{"name", "con"},
+                    new int[]{R.id.textName, R.id.textCon}
+            );
+
+            list.setAdapter(adapter);
+
+
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
 
 }

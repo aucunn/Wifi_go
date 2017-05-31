@@ -77,6 +77,8 @@ public class NaviActivity extends AppCompatActivity
     String myJson;
 
 
+    private boolean myLocatCH = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -226,12 +228,11 @@ public class NaviActivity extends AppCompatActivity
     PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
-            Toast.makeText(NaviActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NaviActivity.this, "권한확인", Toast.LENGTH_SHORT).show();
 
             mLocationPermission = true;
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             updatesLocation();
-            //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocetionRequset, this);
         }
 
         @Override
@@ -281,12 +282,18 @@ public class NaviActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        new TedPermission(this)
-                .setPermissionListener(permissionlistener)
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                .setPermissions(Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION)
-                .check();
 
+        if(mLocationPermission != true)
+        {
+            new TedPermission(this)
+                    .setPermissionListener(permissionlistener)
+                    .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                    .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+                    .check();
+        }
+        else {
+            updatesLocation();
+        }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -307,10 +314,11 @@ public class NaviActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
-        //mCurrentLocation = location;
-        //LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
+        if(myLocatCH == true) {
+            mCurrentLocation = location;
+            LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
     }
 
     @Override
@@ -338,11 +346,12 @@ public class NaviActivity extends AppCompatActivity
             new TedPermission(this)
                     .setPermissionListener(permissionlistener)
                     .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                    .setPermissions(Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION)
+                    .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
                     .check();
         }
         super.onResume();
     }
+
 
     protected void makeMarker(){
         try{
@@ -460,7 +469,6 @@ public class NaviActivity extends AppCompatActivity
     @Override
     public void onCameraIdle() {
 
-        Toast.makeText(NaviActivity.this, "움직임", Toast.LENGTH_SHORT).show();
 
     }
 
