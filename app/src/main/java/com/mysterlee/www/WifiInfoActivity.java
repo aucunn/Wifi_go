@@ -60,6 +60,8 @@ public class WifiInfoActivity extends AppCompatActivity {
         webView.loadUrl(image);
 
 
+
+
 /*
         WifiConfiguration wfc = new WifiConfiguration();
         wfc.SSID = "\"".concat(name).concat("\"");
