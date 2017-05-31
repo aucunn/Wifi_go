@@ -338,7 +338,7 @@ public class NaviActivity extends AppCompatActivity
         }
         super.onResume();
     }
-
+    //하이여 테스트입니다.
     protected void makeMarker(){
         try{
 
