@@ -45,7 +45,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/editText"
+                    android:id="@+id/editTextReply"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -54,10 +54,11 @@
                     android:inputType="textPersonName" />
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/buttonReply"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:onClick="insert"
                     android:text="Button" />
             </LinearLayout>
 
