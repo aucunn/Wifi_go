@@ -77,7 +77,7 @@
                 android:id="@+id/textRePass"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:text="비밀번호 확인"
+                android:text="비밀"
                 android:textSize="24sp" />
 
             <EditText
