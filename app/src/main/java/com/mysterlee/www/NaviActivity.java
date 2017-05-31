@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,7 +27,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -55,10 +53,7 @@ public class NaviActivity extends AppCompatActivity
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener,
-        GoogleMap.OnCameraIdleListener,
-        GoogleMap.OnMapLongClickListener
-{
+        LocationListener {
 
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
@@ -72,12 +67,8 @@ public class NaviActivity extends AppCompatActivity
 
     private String num;
 
-    protected LocationManager locationManager;
-
     String myJson;
 
-
-    private boolean myLocatCH = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +76,6 @@ public class NaviActivity extends AppCompatActivity
         setContentView(R.layout.activity_navi);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
 
         if (savedInstanceState != null){
             mCurrentLocation = savedInstanceState.getParcelable(LOCATION);
@@ -121,8 +110,6 @@ public class NaviActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         num = intent.getStringExtra("num");
-
-
 
 
 
@@ -195,8 +182,6 @@ public class NaviActivity extends AppCompatActivity
 
         insertToDatabase("10");
 
-        UiSettings uiSettings = mMap.getUiSettings();
-        uiSettings.setZoomControlsEnabled(true);
 
 
         if (mCameraPosition != null){
@@ -216,9 +201,6 @@ public class NaviActivity extends AppCompatActivity
 
         updateLocationUI();
 
-        mMap.setOnCameraIdleListener(this);
-        mMap.setOnMapLongClickListener(this);
-
 
         // Add a marker in Sydney and move the camera
 
@@ -228,11 +210,12 @@ public class NaviActivity extends AppCompatActivity
     PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
-            Toast.makeText(NaviActivity.this, "권한확인", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NaviActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
 
             mLocationPermission = true;
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             updatesLocation();
+            //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocetionRequset, this);
         }
 
         @Override
@@ -282,18 +265,12 @@ public class NaviActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
+        new TedPermission(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+                .check();
 
-        if(mLocationPermission != true)
-        {
-            new TedPermission(this)
-                    .setPermissionListener(permissionlistener)
-                    .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                    .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
-                    .check();
-        }
-        else {
-            updatesLocation();
-        }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -314,11 +291,10 @@ public class NaviActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
-        if(myLocatCH == true) {
-            mCurrentLocation = location;
-            LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        }
+        mCurrentLocation = location;
+        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
     }
 
     @Override
@@ -352,7 +328,6 @@ public class NaviActivity extends AppCompatActivity
         super.onResume();
     }
 
-
     protected void makeMarker(){
         try{
 
@@ -361,7 +336,7 @@ public class NaviActivity extends AppCompatActivity
 
             int no = var.length();
 
-            final Intent intent = new Intent(this, WifiInfoActivity.class);
+            final Intent intent = new Intent(this, WifiActivity.class);
 
             for(int j = 0; j < no; j++ )
             {
@@ -466,16 +441,7 @@ public class NaviActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void onCameraIdle() {
 
 
-    }
 
-
-    @Override
-    public void onMapLongClick(LatLng latLng) {
-        Intent intent = new Intent(getApplicationContext(), MakerActivity.class);
-        startActivity(intent);
-    }
 }
