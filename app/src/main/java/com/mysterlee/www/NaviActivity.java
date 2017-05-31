@@ -53,7 +53,8 @@ public class NaviActivity extends AppCompatActivity
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener,
+        GoogleMap.OnMapLongClickListener{
 
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
@@ -68,6 +69,8 @@ public class NaviActivity extends AppCompatActivity
     private String num;
 
     String myJson;
+
+    private boolean myLocatCH = true;
 
 
     @Override
@@ -265,11 +268,17 @@ public class NaviActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        new TedPermission(this)
-                .setPermissionListener(permissionlistener)
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
-                .check();
+        if(mLocationPermission != true)
+        {
+            new TedPermission(this)
+                    .setPermissionListener(permissionlistener)
+                    .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                    .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+                    .check();
+        }
+        else {
+            updatesLocation();
+        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -291,9 +300,11 @@ public class NaviActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
-        mCurrentLocation = location;
-        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        if(myLocatCH == true) {
+            mCurrentLocation = location;
+            LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
 
     }
 
@@ -336,7 +347,7 @@ public class NaviActivity extends AppCompatActivity
 
             int no = var.length();
 
-            final Intent intent = new Intent(this, WifiActivity.class);
+            final Intent intent = new Intent(this, WifiInfoActivity.class);
 
             for(int j = 0; j < no; j++ )
             {
@@ -441,7 +452,8 @@ public class NaviActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onMapLongClick(LatLng latLng) {
 
-
-
+    }
 }
