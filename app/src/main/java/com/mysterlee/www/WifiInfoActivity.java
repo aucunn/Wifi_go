@@ -95,38 +95,54 @@ public class WifiInfoActivity extends AppCompatActivity {
     {
         String con = editTextCon.getText().toString();
 
-        String link = "https://www.mysterlee.com/wifigo/reply.php";
+        class insertReply extends AsyncTask<String, Void, String>
+        {
 
-        try {
-            String data = URLEncoder.encode("con", "UTF-8") + "=" + URLEncoder.encode(con, "UTF-8");
-            data += "&" + URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
-            data += "&" + URLEncoder.encode("lat", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(lat), "UTF-8");
-            data += "&" + URLEncoder.encode("lon", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(lon), "UTF-8");
+            @Override
+            protected String doInBackground(String... params) {
+                try {
 
-            URL url = new URL(link);
-            URLConnection conn = url.openConnection();
+                    String con = (String)params[0];
 
-            conn.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                    String link = "https://www.mysterlee.com/wifigo/reply.php";
+                    String data = URLEncoder.encode("con", "UTF-8") + "=" + URLEncoder.encode(con, "UTF-8");
+                    data += "&" + URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
+                    data += "&" + URLEncoder.encode("lat", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(lat), "UTF-8");
+                    data += "&" + URLEncoder.encode("lon", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(lon), "UTF-8");
 
-            wr.write(data);
-            wr.flush();
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-            StringBuilder sb = new StringBuilder();
-            String line = null;
+                    wr.write(data);
+                    wr.flush();
 
-            while ((line = reader.readLine()) != null) {
-                sb.append(line+"\n");
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line+"\n");
+                    }
+
+
+                }
+                catch (Exception e)
+                {
+
+                    String k = String.valueOf(e);
+                }
+
+                return null;
             }
 
         }
-        catch (Exception e)
-        {
+        insertReply task = new insertReply();
+        task.execute(con);
 
-            String k = String.valueOf(e);
-        }
 
     }
 
