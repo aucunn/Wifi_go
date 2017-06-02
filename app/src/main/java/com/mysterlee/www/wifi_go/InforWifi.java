@@ -129,9 +129,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 Tap2 tap2 = new Tap2();
                 return tap2;
-            case 2:
-                Tap3 tap3 = new Tap3();
-                return tap3;
         }
         return null;
     }
@@ -139,7 +136,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // Show 3 total pages.
-        return 3;
+        return 2;
     }
 
     @Override
@@ -148,8 +145,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return "WiFi";
             case 1:
-                return "광고";
-            case 2:
                 return "댓글";
         }
         return null;
