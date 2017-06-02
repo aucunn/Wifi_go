@@ -41,6 +41,8 @@ public class WifiInfoActivity extends AppCompatActivity {
     String myJson;
 
     private WebView webView;
+    private EditText editTextCon;
+    private String num;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +52,13 @@ public class WifiInfoActivity extends AppCompatActivity {
         list = (ListView)findViewById(R.id.replyList);
         replyList = new ArrayList<HashMap<String, String>>();
 
-        editTextId = (EditText)findViewById(R.id.editRegistId);
+        editTextCon = (EditText)findViewById(R.id.editTextReply);
+
 
         Intent intent = getIntent();
         lat = intent.getDoubleExtra("lat", 0);
         lon = intent.getDoubleExtra("lon", 0);
+        num = intent.getStringExtra("num");
 
         insertToDatabase(String.valueOf(lat), String.valueOf(lon));
 
@@ -89,6 +93,40 @@ public class WifiInfoActivity extends AppCompatActivity {
 
     public void insert(View view)
     {
+        String con = editTextCon.getText().toString();
+
+        String link = "https://www.mysterlee.com/wifigo/reply.php";
+
+        try {
+            String data = URLEncoder.encode("con", "UTF-8") + "=" + URLEncoder.encode(con, "UTF-8");
+            data += "&" + URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
+            data += "&" + URLEncoder.encode("lat", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(lat), "UTF-8");
+            data += "&" + URLEncoder.encode("lon", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(lon), "UTF-8");
+
+            URL url = new URL(link);
+            URLConnection conn = url.openConnection();
+
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+            wr.write(data);
+            wr.flush();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+
+            while ((line = reader.readLine()) != null) {
+                sb.append(line+"\n");
+            }
+
+        }
+        catch (Exception e)
+        {
+
+            String k = String.valueOf(e);
+        }
 
     }
 

@@ -373,6 +373,7 @@ public class NaviActivity extends AppCompatActivity
                     public boolean onMarkerClick(Marker marker) {
 
 
+                        intent.putExtra("num", num);
                         intent.putExtra("lat", marker.getPosition().latitude);
                         intent.putExtra("lon", marker.getPosition().longitude);
                         startActivity(intent);

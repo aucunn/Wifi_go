@@ -47,7 +47,7 @@
             android:label="@string/title_activity_navi"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.mysterlee.www.QuestActivity" />
-        <activity android:name="com.mysterlee.www.WifiActivity"></activity>
+        <activity android:name="com.mysterlee.www.WifiInfoActivity"></activity>
     </application>
 
 </manifest>
