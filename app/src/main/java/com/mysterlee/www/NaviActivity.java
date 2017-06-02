@@ -49,13 +49,16 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import static com.mysterlee.www.wifi_go.R.id.map;
+
 public class NaviActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        GoogleMap.OnMapLongClickListener{
+        GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
@@ -81,7 +84,7 @@ public class NaviActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             mCurrentLocation = savedInstanceState.getParcelable(LOCATION);
             mCameraPosition = savedInstanceState.getParcelable(CAMERA_POSITION);
         }
@@ -114,7 +117,6 @@ public class NaviActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         num = intent.getStringExtra("num");
-
 
 
     }
@@ -159,13 +161,11 @@ public class NaviActivity extends AppCompatActivity
 
         if (id == R.id.nav_state) {
 
-        }
-        else if (id == R.id.nav_quest){
+        } else if (id == R.id.nav_quest) {
             Intent intent = new Intent(getApplicationContext(), QuestActivity.class);
             intent.putExtra("num", num);
             startActivity(intent);
-        }
-        else if (id == R.id.nav_board) {
+        } else if (id == R.id.nav_board) {
             Intent intent = new Intent(getApplicationContext(), BoardActivity.class);
             intent.putExtra("num", num);
             startActivity(intent);
@@ -186,21 +186,31 @@ public class NaviActivity extends AppCompatActivity
 
         insertToDatabase("10");
 
+        mMap.setOnMapClickListener(this);
+        mMap.setOnMapLongClickListener(this);
 
 
-        if (mCameraPosition != null){
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                myLocatCH = true;
+                return false;
+            }
+        });
+
+
+
+
+        if (mCameraPosition != null) {
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
-        }
-        else if (mCurrentLocation != null){
+        } else if (mCurrentLocation != null) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mCurrentLocation.getLatitude(),
                             mCurrentLocation.getLongitude()), 16));
-        }
-        else {
+        } else {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(25.3, 34.3), 16));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
-
 
 
         updateLocationUI();
@@ -230,7 +240,7 @@ public class NaviActivity extends AppCompatActivity
 
     };
 
-    protected synchronized void buildGoogleApiClient(){
+    protected synchronized void buildGoogleApiClient() {
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .enableAutoManage(this, this)
@@ -248,17 +258,16 @@ public class NaviActivity extends AppCompatActivity
 
         if (mMap == null) return;
 
-        if (mLocationPermission){
+        if (mLocationPermission) {
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        }
-        else{
+        } else {
             mMap.setMyLocationEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
     }
 
-    private void createLocationRequest(){
+    private void createLocationRequest() {
         mLocetionRequset = new LocationRequest();
         mLocetionRequset.setInterval(10000); //ms
         mLocetionRequset.setFastestInterval(5000);
@@ -269,21 +278,19 @@ public class NaviActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        if(mLocationPermission != true)
-        {
+        if (mLocationPermission != true) {
             new TedPermission(this)
                     .setPermissionListener(permissionlistener)
                     .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
                     .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
                     .check();
-        }
-        else {
+        } else {
             updatesLocation();
         }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(map);
         mapFragment.getMapAsync(this);
 
     }
@@ -301,18 +308,27 @@ public class NaviActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
-        if(myLocatCH == true) {
-            mCurrentLocation = location;
-            LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+        if (myLocatCH == true) {
+
+            if (((mMap.getCameraPosition().target.latitude > (location.getLatitude() + 0.00003))
+                    || (mMap.getCameraPosition().target.latitude < (location.getLatitude() - 0.00003)))
+                    && (mMap.getCameraPosition().target.longitude > (location.getLongitude() + 0.00003))
+                    || (mMap.getCameraPosition().target.longitude < (location.getLongitude() - 0.000003))) {
+                myLocatCH = false;
+            } else {
+                mCurrentLocation = location;
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            }
         }
 
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState){
+    protected void onSaveInstanceState(Bundle outState) {
 
-        if (mMap != null){
+        if (mMap != null) {
             outState.putParcelable(CAMERA_POSITION, mMap.getCameraPosition());
             outState.putParcelable(LOCATION, mCurrentLocation);
             super.onSaveInstanceState(outState);
@@ -321,16 +337,16 @@ public class NaviActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
-        if (mGoogleApiClient.isConnected()){
+        if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
     }
 
     @Override
-    protected void onResume(){
-        if (mGoogleApiClient.isConnected()){
+    protected void onResume() {
+        if (mGoogleApiClient.isConnected()) {
             new TedPermission(this)
                     .setPermissionListener(permissionlistener)
                     .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
@@ -339,10 +355,11 @@ public class NaviActivity extends AppCompatActivity
         }
         super.onResume();
     }
+
     //하이여 테스트입니다.
     ///테스트2
-    protected void makeMarker(){
-        try{
+    protected void makeMarker() {
+        try {
 
             JSONObject jsonObj = new JSONObject(myJson);
             JSONArray var = jsonObj.getJSONArray("wifi");
@@ -351,8 +368,7 @@ public class NaviActivity extends AppCompatActivity
 
             final Intent intent = new Intent(this, InforWifi.class);
 
-            for(int j = 0; j < no; j++ )
-            {
+            for (int j = 0; j < no; j++) {
                 JSONObject c = var.getJSONObject(j);
 
                 String name = c.getString("name");
@@ -363,7 +379,7 @@ public class NaviActivity extends AppCompatActivity
                 Double e = c.getDouble("e");
 
 
-                if(c.getString("var").equals("1"))
+                if (c.getString("var").equals("1"))
                     mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 else
                     mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name));
@@ -383,18 +399,10 @@ public class NaviActivity extends AppCompatActivity
                 });
 
 
-
-
-
-
             }
 
 
-
-
-
-        }
-        catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -412,10 +420,10 @@ public class NaviActivity extends AppCompatActivity
             }
 
             @Override
-            protected  String doInBackground(String... params) {
+            protected String doInBackground(String... params) {
 
                 try {
-                    String num = (String)params[0];
+                    String num = (String) params[0];
 
                     String link = "https://www.mysterlee.com/wifigo/wifi.php";
                     String data = URLEncoder.encode("no", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
@@ -435,14 +443,13 @@ public class NaviActivity extends AppCompatActivity
                     String line = null;
 
                     while ((line = reader.readLine()) != null) {
-                        sb.append(line+"\n");
+                        sb.append(line + "\n");
                     }
 
 
                     return sb.toString().trim();
 
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     return new String("Exception: " + e.getMessage());
                 }
             }
@@ -455,8 +462,20 @@ public class NaviActivity extends AppCompatActivity
     }
 
 
+
     @Override
     public void onMapLongClick(LatLng latLng) {
 
+        Intent intent = new Intent(this, MakerActivity.class);
+        intent.putExtra("lat", latLng.latitude);
+        intent.putExtra("lon", latLng.longitude);
+        startActivity(intent);
+    }
+
+
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        Toast.makeText(NaviActivity.this, "클릭", Toast.LENGTH_SHORT).show();
     }
 }
