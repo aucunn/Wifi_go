@@ -51,7 +51,7 @@
         <activity
             android:name=".InforWifi"
             android:label="@string/title_activity_infor_wifi"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

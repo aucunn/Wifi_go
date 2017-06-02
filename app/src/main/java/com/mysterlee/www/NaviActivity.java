@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
+import com.mysterlee.www.wifi_go.InforWifi;
 import com.mysterlee.www.wifi_go.R;
 
 import org.json.JSONArray;
@@ -348,7 +349,7 @@ public class NaviActivity extends AppCompatActivity
 
             int no = var.length();
 
-            final Intent intent = new Intent(this, WifiInfoActivity.class);
+            final Intent intent = new Intent(this, InforWifi.class);
 
             for(int j = 0; j < no; j++ )
             {
