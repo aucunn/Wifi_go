@@ -71,7 +71,6 @@ public class WifiInfoActivity extends AppCompatActivity {
         wfc.SSID = "\"".concat(name).concat("\"");
         wfc.status = WifiConfiguration.Status.DISABLED;
         wfc.priority = 40;
-
         wfc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
         wfc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
         wfc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
