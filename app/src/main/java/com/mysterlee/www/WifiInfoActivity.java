@@ -119,21 +119,11 @@ public class WifiInfoActivity extends AppCompatActivity {
                     wr.write(data);
                     wr.flush();
 
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
-
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line+"\n");
-                    }
-
-
                 }
                 catch (Exception e)
                 {
 
-                    String k = String.valueOf(e);
+
                 }
 
                 return null;
