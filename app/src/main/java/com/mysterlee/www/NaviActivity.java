@@ -469,6 +469,7 @@ public class NaviActivity extends AppCompatActivity
         Intent intent = new Intent(this, MakerActivity.class);
         intent.putExtra("lat", latLng.latitude);
         intent.putExtra("lon", latLng.longitude);
+        intent.putExtra("num", num);
         startActivity(intent);
     }
 

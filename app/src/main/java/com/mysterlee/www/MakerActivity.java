@@ -23,6 +23,8 @@ public class MakerActivity extends AppCompatActivity {
     RadioGroup radioGroup;
     EditText name;
     EditText pass;
+
+    String num;
     double lat;
     double lon;
 
@@ -37,6 +39,7 @@ public class MakerActivity extends AppCompatActivity {
         pass = (EditText)findViewById(R.id.editTextPass);
 
         Intent intent = getIntent();
+        num = intent.getStringExtra("num");
         lat = intent.getDoubleExtra("lat", 0);
         lon = intent.getDoubleExtra("lon", 0);
 
@@ -49,11 +52,11 @@ public class MakerActivity extends AppCompatActivity {
         RadioButton radioButton = (RadioButton)findViewById(checkedRadioButtonId);
 
         insertToDatabase(radioButton.getText().toString(), name.getText().toString(), pass.getText().toString(),
-                String.valueOf(lat), String.valueOf(lon));
+                String.valueOf(lat), String.valueOf(lon), num);
 
     }
 
-    private void insertToDatabase(String color, String name, String pass, String lat, String lon) {
+    private void insertToDatabase(String color, String name, String pass, String lat, String lon, String num) {
 
         class InsertData extends AsyncTask<String, Void, String> {
 
@@ -66,13 +69,17 @@ public class MakerActivity extends AppCompatActivity {
                     String pass = (String) params[2];
                     String lat = (String) params[3];
                     String lon = (String) params[4];
+                    String num = (String) params[5];
+                    String con = (String) params[6];
 
-                    String link = "https://www.mysterlee.com/wifigo/wifi.php";
+                    String link = "https://www.mysterlee.com/wifigo/make.php";
                     String data = URLEncoder.encode("color", "UTF-8") + "=" + URLEncoder.encode(color, "UTF-8");
                     data += URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode(name, "UTF-8");
                     data += URLEncoder.encode("pass", "UTF-8") + "=" + URLEncoder.encode(pass, "UTF-8");
                     data += URLEncoder.encode("lat", "UTF-8") + "=" + URLEncoder.encode(lat, "UTF-8");
                     data += URLEncoder.encode("lon", "UTF-8") + "=" + URLEncoder.encode(lon, "UTF-8");
+                    data += URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
+                    data += URLEncoder.encode("con", "UTF-8") + "=" + URLEncoder.encode(con, "UTF-8");
 
                     URL url = new URL(link);
                     URLConnection conn = url.openConnection();
@@ -103,7 +110,7 @@ public class MakerActivity extends AppCompatActivity {
         }
 
         InsertData task = new InsertData();
-        task.execute(color, name, pass, lat, lon);
+        task.execute(color, name, pass, lat, lon, num);
 
     }
 
