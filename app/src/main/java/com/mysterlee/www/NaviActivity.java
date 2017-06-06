@@ -190,13 +190,7 @@ public class NaviActivity extends AppCompatActivity
         mMap.setOnMapLongClickListener(this);
 
 
-        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-            @Override
-            public boolean onMyLocationButtonClick() {
-                myLocatCH = true;
-                return false;
-            }
-        });
+
 
 
 
@@ -259,8 +253,15 @@ public class NaviActivity extends AppCompatActivity
         if (mMap == null) return;
 
         if (mLocationPermission) {
+            mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                @Override
+                public boolean onMyLocationButtonClick() {
+                    myLocatCH = true;
+                    return false;
+                }
+            });
             mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+           // mMap.getUiSettings().setMyLocationButtonEnabled(true);
         } else {
             mMap.setMyLocationEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -311,10 +312,10 @@ public class NaviActivity extends AppCompatActivity
 
         if (myLocatCH == true) {
 
-            if (((mMap.getCameraPosition().target.latitude > (location.getLatitude() + 0.00003))
-                    || (mMap.getCameraPosition().target.latitude < (location.getLatitude() - 0.00003)))
-                    && (mMap.getCameraPosition().target.longitude > (location.getLongitude() + 0.00003))
-                    || (mMap.getCameraPosition().target.longitude < (location.getLongitude() - 0.000003))) {
+            if (((mMap.getCameraPosition().target.latitude > (location.getLatitude() + 0.0001))
+                    || (mMap.getCameraPosition().target.latitude < (location.getLatitude() - 0.0001)))
+                    && (mMap.getCameraPosition().target.longitude > (location.getLongitude() + 0.0001))
+                    || (mMap.getCameraPosition().target.longitude < (location.getLongitude() - 0.00001))) {
                 myLocatCH = false;
             } else {
                 mCurrentLocation = location;
@@ -347,14 +348,12 @@ public class NaviActivity extends AppCompatActivity
     @Override
     protected void onResume() {
 
-        if (mLocationPermission != true) {
+        if (mGoogleApiClient.isConnected()) {
             new TedPermission(this)
                     .setPermissionListener(permissionlistener)
                     .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
                     .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
                     .check();
-        } else {
-            updatesLocation();
         }
         super.onResume();
     }
