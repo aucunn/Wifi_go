@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 import com.mysterlee.www.wifi_go.R;
 
@@ -222,7 +221,7 @@ public class WifiInfoActivity extends AppCompatActivity {
             pass = jsonObj.getString("pass");
 
 
-            TextView txt = (TextView) findViewById(R.id.textView2);
+            //TextView txt = (TextView) findViewById(R.id.textView2);
 
             int no = var.length();
 /*
