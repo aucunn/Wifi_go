@@ -218,7 +218,7 @@ public class NaviActivity extends AppCompatActivity
     PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
-            Toast.makeText(NaviActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NaviActivity.this, "권한 확인", Toast.LENGTH_SHORT).show();
 
             mLocationPermission = true;
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
