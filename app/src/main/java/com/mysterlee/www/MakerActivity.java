@@ -11,8 +11,6 @@ import android.widget.RadioGroup;
 
 import com.mysterlee.www.wifi_go.R;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
@@ -92,17 +90,10 @@ public class MakerActivity extends AppCompatActivity {
                     wr.write(data);
                     wr.flush();
 
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
+                    onBackPressed();
 
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-
-
-                    return sb.toString().trim();
+                    return "확인";
 
                 } catch (Exception e) {
                     return new String("Exception: " + e.getMessage());

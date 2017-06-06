@@ -48,11 +48,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.mysterlee.www.QuestActivity" />
         <activity android:name="com.mysterlee.www.WifiInfoActivity" />
-        <activity
-            android:name=".InforWifi"
-            android:label="@string/title_activity_infor_wifi"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.mysterlee.www.MakerActivity" />
+        <activity android:name="com.mysterlee.www.UserActivity" />
+        <activity
+            android:name="com.mysterlee.www.WifiActivity"
+            android:label="@string/title_activity_wifi"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

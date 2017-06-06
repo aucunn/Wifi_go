@@ -36,7 +36,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
-import com.mysterlee.www.wifi_go.InforWifi;
 import com.mysterlee.www.wifi_go.R;
 
 import org.json.JSONArray;
@@ -162,7 +161,9 @@ public class NaviActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_state) {
-
+            Intent intent = new Intent(getApplicationContext(), UserActivity.class);
+            intent.putExtra("num", num);
+            startActivity(intent);
         } else if (id == R.id.nav_quest) {
             Intent intent = new Intent(getApplicationContext(), QuestActivity.class);
             intent.putExtra("num", num);
@@ -386,7 +387,7 @@ public class NaviActivity extends AppCompatActivity
 
             int no = var.length();
 
-            final Intent intent = new Intent(this, InforWifi.class);
+            final Intent intent = new Intent(this, WifiActivity.class);
 
             for (int j = 0; j < no; j++) {
                 JSONObject c = var.getJSONObject(j);
@@ -400,13 +401,13 @@ public class NaviActivity extends AppCompatActivity
 
 
                 if (c.getString("var").equals("빨강"))
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.fromResource(R.drawable.red)));
                 else if (c.getString("var").equals("노랑") && c.getString("user").equals(num))
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(R.drawable.yellow)));
                 else if (c.getString("var").equals("파랑"))
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(R.drawable.blue)));
                 else if (c.getString("var").equals("초록"))
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(R.drawable.green)));
 
 
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {

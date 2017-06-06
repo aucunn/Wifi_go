@@ -1,7 +1,9 @@
 package com.mysterlee.www.wifi_go;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextPass;
     private int num;
 
+    String loginId, loginPass;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +38,23 @@ public class MainActivity extends AppCompatActivity {
 
         editTextId = (EditText)findViewById(R.id.editId);
         editTextPass = (EditText)findViewById(R.id.editPass);
+
+        SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+
+        loginId = auto.getString("inputId",null);
+        loginPass = auto.getString("inputPass",null);
+
+        if(loginId !=null && loginPass != null) {
+            insertToDatabase(loginId, loginPass);
+
+        }
+
+
+
+
+
+
+
 
     }
 
@@ -48,7 +71,21 @@ public class MainActivity extends AppCompatActivity {
         if(num >= 1) {
             Intent intent = new Intent(this, NaviActivity.class);
             intent.putExtra("num", String.valueOf(num));
+
+
+            SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+            SharedPreferences.Editor autoLogin = auto.edit();
+            autoLogin.putString("inputId", editTextId.getText().toString());
+            autoLogin.putString("inputPass", editTextPass.getText().toString());
+
+            autoLogin.commit();
+
             startActivity(intent);
+            finish();
+
+
+
+
         }
         else{
             Toast.makeText(this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();

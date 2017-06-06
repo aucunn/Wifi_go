@@ -1,17 +1,18 @@
 package com.mysterlee.www;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.webkit.WebView;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 import com.mysterlee.www.wifi_go.R;
 
@@ -28,113 +29,94 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class WifiInfoActivity extends AppCompatActivity {
+/**
+ * Created by aucun on 2017-06-06.
+ */
+
+public class Tab2 extends Fragment {
+
 
     private double lat;
     private double lon;
-    private String id;
-    private String pass;
-
-
-    ArrayList<HashMap<String, String>> replyList;
-    ListView list;
-    String myJson;
-
-    private WebView webView;
-    private EditText editTextCon;
     private String num;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wifi_info);
+    String myJson;
+    View view;
 
-        list = (ListView)findViewById(R.id.replyList);
+    EditText editTextCon;
+    ArrayList<HashMap<String, String>> replyList;
+    ListView list;
+
+    public Tab2(double late, double lone, String num2) {
+        lat = late;
+        lon = lone;
+        num = num2;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.tap2, container, false);
+
+        editTextCon = (EditText)view.findViewById(R.id.editTextReply);
+        list = (ListView) view.findViewById(R.id.replyListView);
         replyList = new ArrayList<HashMap<String, String>>();
 
-        editTextCon = (EditText)findViewById(R.id.editTextReply);
+
+        Button button = (Button)view.findViewById(R.id.buttonReply);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String con = editTextCon.getText().toString();
+
+                class insertReply extends AsyncTask<String, Void, String>
+                {
+
+                    @Override
+                    protected String doInBackground(String... params) {
+                        try {
+
+                            String con = (String)params[0];
+
+                            String link = "https://www.mysterlee.com/wifigo/reply.php";
+                            String data = URLEncoder.encode("con", "UTF-8") + "=" + URLEncoder.encode(con, "UTF-8");
+                            data += "&" + URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
+                            data += "&" + URLEncoder.encode("lat", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(lat), "UTF-8");
+                            data += "&" + URLEncoder.encode("lon", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(lon), "UTF-8");
+
+                            URL url = new URL(link);
+                            URLConnection conn = url.openConnection();
+
+                            conn.setDoOutput(true);
+                            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                            wr.write(data);
+                            wr.flush();
+
+                        }
+                        catch (Exception e)
+                        {
 
 
-        Intent intent = getIntent();
-        lat = intent.getDoubleExtra("lat", 0);
-        lon = intent.getDoubleExtra("lon", 0);
-        num = intent.getStringExtra("num");
+                        }
+
+                        return null;
+                    }
+
+                }
+                insertReply task = new insertReply();
+                task.execute(con);
+
+            }
+        });
 
         insertToDatabase(String.valueOf(lat), String.valueOf(lon));
 
-        webView = (WebView)findViewById(R.id.webView);
-
-        String image = "http://imgnews.naver.com/image/112/2005/11/25/200511250023.gif";
-        webView.loadUrl(image);
-
-
-
-
-/*
-        WifiConfiguration wfc = new WifiConfiguration();
-        wfc.SSID = "\"".concat(name).concat("\"");
-        wfc.status = WifiConfiguration.Status.DISABLED;
-        wfc.priority = 40;
-        wfc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-        wfc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
-        wfc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-        wfc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-        wfc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-        wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-        wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-        wfc.preSharedKey = "\"".concat(pass).concat("\"");
-*/
-
-
-
-
+        return view;
     }
 
 
-    public void insert(View view)
-    {
-        String con = editTextCon.getText().toString();
-
-        class insertReply extends AsyncTask<String, Void, String>
-        {
-
-            @Override
-            protected String doInBackground(String... params) {
-                try {
-
-                    String con = (String)params[0];
-
-                    String link = "https://www.mysterlee.com/wifigo/reply.php";
-                    String data = URLEncoder.encode("con", "UTF-8") + "=" + URLEncoder.encode(con, "UTF-8");
-                    data += "&" + URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
-                    data += "&" + URLEncoder.encode("lat", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(lat), "UTF-8");
-                    data += "&" + URLEncoder.encode("lon", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(lon), "UTF-8");
-
-                    URL url = new URL(link);
-                    URLConnection conn = url.openConnection();
-
-                    conn.setDoOutput(true);
-                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-                    wr.write(data);
-                    wr.flush();
-
-                }
-                catch (Exception e)
-                {
-
-
-                }
-
-                return null;
-            }
-
-        }
-        insertReply task = new insertReply();
-        task.execute(con);
-
-
-    }
 
 
 
@@ -172,7 +154,7 @@ public class WifiInfoActivity extends AppCompatActivity {
                     String lat = (String)params[0];
                     String lon = (String)params[1];
 
-                    String link = "https://www.mysterlee.com/wifigo/wifi_data.php";
+                    String link = "https://www.mysterlee.com/wifigo/wifi_data2.php";
 
                     String data = URLEncoder.encode("lat", "UTF-8") + "=" + URLEncoder.encode(lat, "UTF-8");
                     data += "&" + URLEncoder.encode("lon", "UTF-8") + "=" + URLEncoder.encode(lon, "UTF-8");
@@ -218,12 +200,7 @@ public class WifiInfoActivity extends AppCompatActivity {
             JSONObject jsonObj = new JSONObject(myJson);
             JSONArray var = jsonObj.getJSONArray("wifi");
 
-            id = jsonObj.getString("id");
-            pass = jsonObj.getString("pass");
-            String tcon = jsonObj.getString("con");
 
-            TextView textView = (TextView)findViewById(R.id.textViewCon2);
-            textView.setText(tcon);
 
 
             //TextView txt = (TextView) findViewById(R.id.textView2);
@@ -253,7 +230,7 @@ public class WifiInfoActivity extends AppCompatActivity {
                 replyList.add(quest);
             }
 
-            ListAdapter adapter = new SimpleAdapter(WifiInfoActivity.this,
+            ListAdapter adapter = new SimpleAdapter(getActivity(),
                     replyList, R.layout.re_wifi,
                     new String[]{"name", "con"},
                     new int[]{R.id.textName, R.id.textCon}
@@ -267,6 +244,5 @@ public class WifiInfoActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
 
 }
