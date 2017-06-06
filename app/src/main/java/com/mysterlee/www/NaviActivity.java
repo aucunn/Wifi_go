@@ -3,12 +3,14 @@ package com.mysterlee.www;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -190,11 +192,6 @@ public class NaviActivity extends AppCompatActivity
         mMap.setOnMapLongClickListener(this);
 
 
-
-
-
-
-
         if (mCameraPosition != null) {
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
         } else if (mCurrentLocation != null) {
@@ -261,7 +258,7 @@ public class NaviActivity extends AppCompatActivity
                 }
             });
             mMap.setMyLocationEnabled(true);
-           // mMap.getUiSettings().setMyLocationButtonEnabled(true);
+            // mMap.getUiSettings().setMyLocationButtonEnabled(true);
         } else {
             mMap.setMyLocationEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -286,6 +283,12 @@ public class NaviActivity extends AppCompatActivity
                     .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
                     .check();
         } else {
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                return;
+            }
+            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             updatesLocation();
         }
 
@@ -349,11 +352,20 @@ public class NaviActivity extends AppCompatActivity
     protected void onResume() {
 
         if (mGoogleApiClient.isConnected()) {
-            new TedPermission(this)
-                    .setPermissionListener(permissionlistener)
-                    .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                    .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
-                    .check();
+            if(mLocationPermission != true) {
+                new TedPermission(this)
+                        .setPermissionListener(permissionlistener)
+                        .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                        .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+                        .check();
+            } else {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                    return;
+                }
+                mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                updatesLocation();
+            }
         }
         super.onResume();
     }
