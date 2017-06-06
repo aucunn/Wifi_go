@@ -250,17 +250,10 @@ public class NaviActivity extends AppCompatActivity
         if (mMap == null) return;
 
 
-        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-            @Override
-            public boolean onMyLocationButtonClick() {
-                myLocatCH = true;
-                return false;
-            }
-        });
-        //mMap.setMyLocationEnabled(true);
 
 
-/*
+
+
         if (mLocationPermission) {
             mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
@@ -270,12 +263,12 @@ public class NaviActivity extends AppCompatActivity
                 }
             });
             mMap.setMyLocationEnabled(true);
-            // mMap.getUiSettings().setMyLocationButtonEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
         } else {
             mMap.setMyLocationEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
-        */
+
     }
 
     private void createLocationRequest() {
