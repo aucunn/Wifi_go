@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.mysterlee.www.wifi_go.R;
 
@@ -168,6 +169,7 @@ public class QuestActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                    Toast.makeText(QuestActivity.this, "보상", Toast.LENGTH_SHORT).show();
                     //보상관련
 
                 }

@@ -249,6 +249,18 @@ public class NaviActivity extends AppCompatActivity
 
         if (mMap == null) return;
 
+
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                myLocatCH = true;
+                return false;
+            }
+        });
+        //mMap.setMyLocationEnabled(true);
+
+
+/*
         if (mLocationPermission) {
             mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
@@ -263,6 +275,7 @@ public class NaviActivity extends AppCompatActivity
             mMap.setMyLocationEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
+        */
     }
 
     private void createLocationRequest() {
@@ -393,10 +406,14 @@ public class NaviActivity extends AppCompatActivity
                 Double e = c.getDouble("e");
 
 
-                if (c.getString("var").equals("1"))
+                if (c.getString("var").equals("빨강"))
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                else if (c.getString("var").equals("노랑") && c.getString("user").equals(num))
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                else if (c.getString("var").equals("파랑"))
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                else if (c.getString("var").equals("초록"))
                     mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                else
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name));
 
 
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
