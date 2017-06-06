@@ -1,6 +1,7 @@
 package com.mysterlee.www;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.mysterlee.www.wifi_go.R;
 
@@ -42,6 +44,7 @@ public class Tab2 extends Fragment {
 
     String myJson;
     View view;
+    ListAdapter adapter;
 
     EditText editTextCon;
     ArrayList<HashMap<String, String>> replyList;
@@ -52,6 +55,8 @@ public class Tab2 extends Fragment {
         lon = lone;
         num = num2;
     }
+
+
 
     @Nullable
     @Override
@@ -94,10 +99,23 @@ public class Tab2 extends Fragment {
                             wr.write(data);
                             wr.flush();
 
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                            StringBuilder sb = new StringBuilder();
+                            String line = null;
+
+                            while ((line = reader.readLine()) != null) {
+                                sb.append(line+"\n");
+                            }
+
+                            return sb.toString().trim();
+
+
+
                         }
                         catch (Exception e)
                         {
-
+                            Toast.makeText(getActivity(), String.valueOf(e), Toast.LENGTH_SHORT).show();
 
                         }
 
@@ -107,8 +125,16 @@ public class Tab2 extends Fragment {
                 }
                 insertReply task = new insertReply();
                 task.execute(con);
+                Intent intent = new Intent(getActivity(), WifiActivity.class);
+                intent.putExtra("num", num);
+                intent.putExtra("lat", lat);
+                intent.putExtra("lon", lon);
+                startActivity(intent);
+                getActivity().finish();
 
             }
+
+
         });
 
         insertToDatabase(String.valueOf(lat), String.valueOf(lon));
@@ -230,7 +256,7 @@ public class Tab2 extends Fragment {
                 replyList.add(quest);
             }
 
-            ListAdapter adapter = new SimpleAdapter(getActivity(),
+            adapter = new SimpleAdapter(getActivity(),
                     replyList, R.layout.re_wifi,
                     new String[]{"name", "con"},
                     new int[]{R.id.textName, R.id.textCon}

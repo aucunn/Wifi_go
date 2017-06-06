@@ -6,10 +6,10 @@
             android:id="@+id/nav_state"
             android:icon="@drawable/ic_menu_camera"
             android:title="정보창" />
-        <item
+        <!--item
             android:id="@+id/nav_quest"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="도전과제" />
+            android:title="도전과제" /-->
         <item
             android:id="@+id/nav_board"
             android:icon="@drawable/ic_menu_gallery"

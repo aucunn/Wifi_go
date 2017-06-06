@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -74,6 +77,8 @@ public class NaviActivity extends AppCompatActivity
     private String num;
 
     String myJson;
+    private WebView webView;
+
 
     private boolean myLocatCH = true;
 
@@ -120,7 +125,11 @@ public class NaviActivity extends AppCompatActivity
         num = intent.getStringExtra("num");
 
 
+
+
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -164,11 +173,13 @@ public class NaviActivity extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), UserActivity.class);
             intent.putExtra("num", num);
             startActivity(intent);
-        } else if (id == R.id.nav_quest) {
+        }/*
+        else if (id == R.id.nav_quest) {
             Intent intent = new Intent(getApplicationContext(), QuestActivity.class);
             intent.putExtra("num", num);
             startActivity(intent);
-        } else if (id == R.id.nav_board) {
+        }*/
+        else if (id == R.id.nav_board) {
             Intent intent = new Intent(getApplicationContext(), BoardActivity.class);
             intent.putExtra("num", num);
             startActivity(intent);
@@ -200,7 +211,7 @@ public class NaviActivity extends AppCompatActivity
                     new LatLng(mCurrentLocation.getLatitude(),
                             mCurrentLocation.getLongitude()), 16));
         } else {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(25.3, 34.3), 16));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.15660555390101, 128.10578774660829), 16));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
 
@@ -255,7 +266,7 @@ public class NaviActivity extends AppCompatActivity
 
 
 
-        if (mLocationPermission) {
+        //if (mLocationPermission) {
             mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
                 public boolean onMyLocationButtonClick() {
@@ -265,10 +276,10 @@ public class NaviActivity extends AppCompatActivity
             });
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        } else {
+        /*} else {
             mMap.setMyLocationEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
-        }
+        }*/
 
     }
 
@@ -401,13 +412,13 @@ public class NaviActivity extends AppCompatActivity
 
 
                 if (c.getString("var").equals("빨강"))
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.fromResource(R.drawable.red)));
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("red",70,100))));
                 else if (c.getString("var").equals("노랑") && c.getString("user").equals(num))
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(R.drawable.yellow)));
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("yellow",70,100))));
                 else if (c.getString("var").equals("파랑"))
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(R.drawable.blue)));
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("blue",70,100))));
                 else if (c.getString("var").equals("초록"))
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.defaultMarker(R.drawable.green)));
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(n, e)).title(name).icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("green",70,100))));
 
 
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -430,6 +441,12 @@ public class NaviActivity extends AppCompatActivity
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public Bitmap resizeMapIcons(String iconName, int width, int height){
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
     }
 
 

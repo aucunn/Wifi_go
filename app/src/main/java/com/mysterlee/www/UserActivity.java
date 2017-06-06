@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,9 +28,11 @@ import java.net.URLEncoder;
 
 public class UserActivity extends AppCompatActivity {
 
+    private static final int PI = 1;
     String num;
 
     String myJson;
+    private WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,10 @@ public class UserActivity extends AppCompatActivity {
         num = intent.getStringExtra("num");
 
         insertToDatabase(num);
+
+        webView = (WebView)findViewById(R.id.webView);
+
+
 
     }
 
@@ -113,6 +121,29 @@ public class UserActivity extends AppCompatActivity {
 
     }
 
+    public void btnName (View v)
+    {
+        Intent intent = new Intent(getApplicationContext(), PotoActivity.class);
+        intent.putExtra("number", "1");
+        intent.putExtra("name", num);
+        startActivityForResult(intent, PI);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PI) {
+
+            Intent intent = new Intent(this, UserActivity.class);
+            intent.putExtra("num", num);
+            startActivity(intent);
+            this.finish();
+
+        }
+    }
+
+
+
+
     protected void makeMarker() {
         try {
 
@@ -127,17 +158,36 @@ public class UserActivity extends AppCompatActivity {
             TextView editTextLv = (TextView)findViewById(R.id.textViewLv);
             TextView editTextPoint = (TextView)findViewById(R.id.textViewPoint);
             TextView editTextItem = (TextView)findViewById(R.id.textViewItem);
-            TextView editTextName = (TextView)findViewById(R.id.textViewName);
+            Button editTextName = (Button) findViewById(R.id.buttonName);
 
             editTextItem.setText(item);
             editTextLv.setText("Lv. " + lv);
             editTextPoint.setText(point.trim()+" Point");
             editTextName.setText(name);
 
+            webView.setVerticalScrollBarEnabled(false);
+            webView.setVerticalScrollbarOverlay(false);
+            webView.setHorizontalScrollBarEnabled(false);
+            webView.setHorizontalScrollbarOverlay(false);
+            webView.setInitialScale(100);
+            webView.loadDataWithBaseURL(null,creHtmlBody("https://www.mysterlee.com/wifigo/user/" + num + ".jpg"), "text/html", "utf-8", null);
+
+
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public  String creHtmlBody(String imagUrl){
+        StringBuffer sb = new StringBuffer("<HTML>");
+        sb.append("<HEAD>");
+        sb.append("</HEAD>");
+        sb.append("<BODY style='margin:0; padding:0; text-align:center;'>");    //중앙정렬
+        sb.append("<img width='100%' height='100%' src=\"" + imagUrl+"\">"); //가득차게 나옴
+        sb.append("</BODY>");
+        sb.append("</HTML>");
+        return sb.toString();
     }
 
 }

@@ -26,7 +26,6 @@ dependencies {
     })
 
     // Required for instrumented tests
-    
 
 
     compile 'gun0912.ted:tedpermission:1.0.3'

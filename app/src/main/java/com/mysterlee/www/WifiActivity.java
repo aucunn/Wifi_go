@@ -72,7 +72,14 @@ public class WifiActivity extends AppCompatActivity {
             }
         });
 */
+
+
+
+
+
+
     }
+
 
 
     @Override
@@ -167,6 +174,8 @@ public class WifiActivity extends AppCompatActivity {
             // Show 3 total pages.
             return 2;
         }
+
+
 
         @Override
         public CharSequence getPageTitle(int position) {

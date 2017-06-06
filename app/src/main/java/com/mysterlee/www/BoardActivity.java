@@ -110,6 +110,7 @@ public class BoardActivity extends AppCompatActivity {
 
         InsertData task = new InsertData();
         task.execute(title, con);
+        onBackPressed();
 
     }
 

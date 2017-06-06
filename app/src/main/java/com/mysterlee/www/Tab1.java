@@ -2,6 +2,9 @@ package com.mysterlee.www;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,10 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mysterlee.www.wifi_go.R;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,8 +62,7 @@ public class Tab1 extends Fragment{
 
         webView = (WebView)view.findViewById(R.id.webView);
 
-        String image = "http://imgnews.naver.com/image/112/2005/11/25/200511250023.gif";
-        webView.loadUrl(image);
+
 
         insertToDatabase(String.valueOf(lat), String.valueOf(lon));
 
@@ -140,13 +142,14 @@ public class Tab1 extends Fragment{
         InsertData task = new InsertData();
         task.execute(lat, lon);
 
+
     }
 
     protected void showList(){
         try{
 
             JSONObject jsonObj = new JSONObject(myJson);
-            JSONArray var = jsonObj.getJSONArray("wifi");
+            //JSONArray var = jsonObj.getJSONArray("wifi");
 
             id = jsonObj.getString("id");
             pass = jsonObj.getString("pass");
@@ -155,12 +158,112 @@ public class Tab1 extends Fragment{
             TextView textView = (TextView)view.findViewById(R.id.textViewCon2);
             textView.setText(tcon);
 
+            String poto = jsonObj.getString("poto");
+
+
+            webView.setVerticalScrollBarEnabled(false);
+            webView.setVerticalScrollbarOverlay(false);
+            webView.setHorizontalScrollBarEnabled(false);
+            webView.setHorizontalScrollbarOverlay(false);
+            webView.setInitialScale(100);
+            webView.loadDataWithBaseURL(null,creHtmlBody("https://www.mysterlee.com/wifigo/wifi/" + poto + ".jpg"), "text/html", "utf-8", null);
+
+
+
+
+            //connectWifi(id, pass, "WPA");
+
 
 
         }
         catch (JSONException e){
             e.printStackTrace();
         }
+    }
+
+    public  String creHtmlBody(String imagUrl){
+        StringBuffer sb = new StringBuffer("<HTML>");
+        sb.append("<HEAD>");
+        sb.append("</HEAD>");
+        sb.append("<BODY style='margin:0; padding:0; text-align:center;'>");    //중앙정렬
+        sb.append("<img width='100%' height='100%' src=\"" + imagUrl+"\">"); //가득차게 나옴
+        sb.append("</BODY>");
+        sb.append("</HTML>");
+        return sb.toString();
+    }
+
+
+
+
+
+
+    
+    
+
+
+    public boolean connectWifi(String ssid, String password, String capablities) {
+        WifiConfiguration wfc = new WifiConfiguration();
+
+        wfc.SSID = "\"".concat( ssid ).concat("\"");
+        wfc.status = WifiConfiguration.Status.DISABLED;
+        wfc.priority = 40;
+        Context context = null;
+
+
+        if(capablities.contains("WEP") == true ){
+            wfc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            wfc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+            wfc.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+            wfc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+            wfc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
+            wfc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+
+            wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+            wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+            wfc.wepKeys[0] = "\"".concat(password).concat("\"");
+            wfc.wepTxKeyIndex = 0;
+        }else if(capablities.contains("WPA") == true ) {
+            wfc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+            wfc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+            wfc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+            wfc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+            wfc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+            wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            wfc.preSharedKey = "\"".concat(password).concat("\"");
+        }else if(capablities.contains("WPA2") == true ) {
+            wfc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+            wfc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+            wfc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+            wfc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+            wfc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+            wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            wfc.preSharedKey = "\"".concat(password).concat("\"");
+        }else if(capablities.contains("OPEN") == true ) {
+            wfc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            wfc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+            wfc.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+            wfc.allowedAuthAlgorithms.clear();
+            wfc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+
+            wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+            wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+            wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            wfc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+        }
+
+
+
+        WifiManager wfMgr = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        int networkId = wfMgr.addNetwork(wfc);
+
+        boolean connection = false;
+        if (networkId != -1) {
+            Toast.makeText(context, "연결 시도합니다.\n mantdu.tistory.com", Toast.LENGTH_SHORT).show();
+            connection = wfMgr.enableNetwork(networkId, true);
+        }
+        return connection;
     }
 
 

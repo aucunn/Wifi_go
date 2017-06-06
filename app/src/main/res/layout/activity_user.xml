@@ -20,22 +20,26 @@
 
 
         <WebView
+            android:id="@+id/webView"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:layout_marginTop="50dp"/>
 
-        <TextView
-            android:id="@+id/textViewName"
+        <Button
+            android:id="@+id/buttonName"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+            android:background="@color/colorPrimary"
             android:gravity="center_horizontal"
             android:text="프로필닉네임"
             android:textColor="#ffffff"
+            android:onClick="btnName"
             android:textSize="25dp"
             android:textStyle="bold" />
+
 
     </LinearLayout>
     <ScrollView android:layout_width="match_parent"

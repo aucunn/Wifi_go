@@ -11,13 +11,17 @@ import android.widget.RadioGroup;
 
 import com.mysterlee.www.wifi_go.R;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Random;
 
 public class MakerActivity extends AppCompatActivity {
 
+    private static final int PI = 1;
     RadioGroup radioGroup;
     EditText name;
     EditText pass;
@@ -27,6 +31,7 @@ public class MakerActivity extends AppCompatActivity {
     double lat;
     double lon;
 
+    String poto = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,7 @@ public class MakerActivity extends AppCompatActivity {
 
         insertToDatabase(radioButton.getText().toString(), name.getText().toString(), pass.getText().toString(),
                 String.valueOf(lat), String.valueOf(lon), num, con.getText().toString());
+        onBackPressed();
 
     }
 
@@ -80,6 +86,7 @@ public class MakerActivity extends AppCompatActivity {
                     data += "&" + URLEncoder.encode("lon", "UTF-8") + "=" + URLEncoder.encode(lon, "UTF-8");
                     data += "&" + URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
                     data += "&" + URLEncoder.encode("con", "UTF-8") + "=" + URLEncoder.encode(con, "UTF-8");
+                    data += "&" + URLEncoder.encode("poto", "UTF-8") + "=" + URLEncoder.encode(poto, "UTF-8");
 
                     URL url = new URL(link);
                     URLConnection conn = url.openConnection();
@@ -90,10 +97,17 @@ public class MakerActivity extends AppCompatActivity {
                     wr.write(data);
                     wr.flush();
 
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-                    onBackPressed();
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
 
-                    return "확인";
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+
+
+                    return sb.toString().trim();
 
                 } catch (Exception e) {
                     return new String("Exception: " + e.getMessage());
@@ -106,5 +120,45 @@ public class MakerActivity extends AppCompatActivity {
         task.execute(color, name, pass, lat, lon, num, con);
 
     }
+
+    public void btnImage (View v)
+    {
+        String name = null;
+
+
+        Random rnd =new Random();
+        StringBuffer buf =new StringBuffer();
+        for(int i=0;i<20;i++){
+            if(rnd.nextBoolean()){
+                buf.append((char)((int)(rnd.nextInt(26))+97));
+            }else{
+                buf.append((rnd.nextInt(10)));
+            }
+        }
+
+        name = buf.toString();
+        
+        Intent intent = new Intent(getApplicationContext(), PotoActivity.class);
+        intent.putExtra("number", "2");
+        intent.putExtra("name", name);
+        startActivityForResult(intent, PI);
+
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if (requestCode == PI) {
+            poto = data.getStringExtra("var");
+
+        }
+    }
+
+
+
+
+
 
 }
