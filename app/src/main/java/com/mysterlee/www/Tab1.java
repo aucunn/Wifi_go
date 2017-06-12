@@ -3,6 +3,7 @@ package com.mysterlee.www;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import static com.mysterlee.www.wifi_go.R.id.editTextCon;
+import static com.mysterlee.www.wifi_go.R.id.textView;
+
 /**
  * Created by aucun on 2017-06-06.
  */
@@ -42,12 +47,15 @@ public class Tab1 extends Fragment{
 
     private double lat;
     private double lon;
+    private String num;
+    Button button;
 
     View view;
 
-    public Tab1(double late, double lone) {
+    public Tab1(double late, double lone, String nume) {
         lat = late;
         lon = lone;
+        num = nume;
     }
 
 
@@ -62,12 +70,18 @@ public class Tab1 extends Fragment{
 
         webView = (WebView)view.findViewById(R.id.webView);
 
+        button = (Button)view.findViewById(R.id.buttonRe);
+        button.setVisibility(View.INVISIBLE);
+
+
+
 
 
         insertToDatabase(String.valueOf(lat), String.valueOf(lon));
 
 
         return view;
+
 
 
 
@@ -154,11 +168,80 @@ public class Tab1 extends Fragment{
             id = jsonObj.getString("id");
             pass = jsonObj.getString("pass");
             String tcon = jsonObj.getString("con");
+            final String wifiNo = jsonObj.getString("wifi");
+            String no = jsonObj.getString("no");
 
             TextView textView = (TextView)view.findViewById(R.id.textViewCon2);
             textView.setText(tcon);
 
             String poto = jsonObj.getString("poto");
+
+            if(no.equals(num))
+            {
+                button.setVisibility(View.VISIBLE);
+
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        class insertReply extends AsyncTask<String, Void, String> {
+
+                            @Override
+                            protected String doInBackground(String... params) {
+                                try {
+
+                                    String no = (String) params[0];
+
+                                    String link = "https://www.mysterlee.com/wifigo/wifi_re.php";
+                                    String data = URLEncoder.encode("no", "UTF-8") + "=" + URLEncoder.encode(no, "UTF-8");
+
+                                    URL url = new URL(link);
+                                    URLConnection conn = url.openConnection();
+
+                                    conn.setDoOutput(true);
+                                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                                    wr.write(data);
+                                    wr.flush();
+
+                                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                                    StringBuilder sb = new StringBuilder();
+                                    String line = null;
+
+                                    while ((line = reader.readLine()) != null) {
+                                        sb.append(line + "\n");
+                                    }
+
+                                    return sb.toString().trim();
+
+
+                                } catch (Exception e) {
+                                    Toast.makeText(getActivity(), String.valueOf(e), Toast.LENGTH_LONG).show();
+
+                                }
+
+                                return null;
+                            }
+
+                        }
+                        insertReply task = new insertReply();
+                        task.execute(wifiNo);
+                        Intent intent = new Intent(getActivity(), NaviActivity.class);
+                        intent.putExtra("num", num);
+                        startActivity(intent);
+                        getActivity().finish();
+
+                    }
+
+
+
+
+                });
+
+
+            }
 
 
             webView.setVerticalScrollBarEnabled(false);
@@ -170,6 +253,7 @@ public class Tab1 extends Fragment{
 
 
 
+            Toast.makeText(getActivity(), "ID : " + id + "\nPASS : " + pass, Toast.LENGTH_SHORT).show();
 
             //connectWifi(id, pass, "WPA");
 

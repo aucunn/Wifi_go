@@ -198,7 +198,7 @@ public class NaviActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        insertToDatabase("10");
+        insertToDatabase(num);
 
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);

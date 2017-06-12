@@ -73,7 +73,7 @@ public class UserActivity extends AppCompatActivity {
             protected void onPostExecute(String s) {
 
                 myJson = s;
-                makeMarker();
+                lodeUser();
             }
 
             @Override
@@ -144,7 +144,7 @@ public class UserActivity extends AppCompatActivity {
 
 
 
-    protected void makeMarker() {
+    protected void lodeUser() {
         try {
 
             JSONObject jsonObj = new JSONObject(myJson);

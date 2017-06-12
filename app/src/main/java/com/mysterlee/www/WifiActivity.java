@@ -155,7 +155,7 @@ public class WifiActivity extends AppCompatActivity {
             switch (position)
             {
                 case 0:
-                    Tab1 tab1 = new Tab1(lat, lon);
+                    Tab1 tab1 = new Tab1(lat, lon, num);
                     return tab1;
                 case 1:
                     Tab2 tab2 = new Tab2(lat, lon, num);

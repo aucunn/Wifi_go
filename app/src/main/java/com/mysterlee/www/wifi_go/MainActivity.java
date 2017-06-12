@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         loginPass = auto.getString("inputPass",null);
 
         if(loginId !=null && loginPass != null) {
+            editTextId.setText(loginId);
+            editTextPass.setText(loginPass);
             insertToDatabase(loginId, loginPass);
 
         }
@@ -81,12 +83,7 @@ public class MainActivity extends AppCompatActivity {
             autoLogin.commit();
 
             startActivity(intent);
-            finish();
-
-
-
-
-        }
+            finish(); }
         else{
             Toast.makeText(this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
         }

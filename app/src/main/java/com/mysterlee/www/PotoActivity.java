@@ -44,8 +44,7 @@ public class PotoActivity extends AppCompatActivity {
     String name;
 
 
-    String uploadFilePath = "storage/emulated/0/";//경로를 모르겠으면, 갤러리 어플리케이션 가서 메뉴->상세 정보
-    final String uploadFileName = "testimage.jpg"; //전송하고자하는 파일 이름
+    String uploadFilePath = "storage/emulated/0/";
 
 
 
@@ -60,7 +59,7 @@ public class PotoActivity extends AppCompatActivity {
         uploadButton = (Button)findViewById(R.id.buttonIn);
         messageText  = (TextView)findViewById(R.id.textView2);
 
-        messageText.setText("Uploading file path :- '/mnt/sdcard/"+uploadFileName+"'");
+        messageText.setText("Uploading file path :- '/mnt/sdcard/");
 
 
         Intent intent = getIntent();
@@ -195,12 +194,12 @@ public class PotoActivity extends AppCompatActivity {
             dialog.dismiss();
 
             Log.e("uploadFile", "Source File not exist :"
-                    +uploadFilePath + "" + uploadFileName);
+                    +uploadFilePath);
 
             runOnUiThread(new Runnable() {
                 public void run() {
                     messageText.setText("Source File not exist :"
-                            +uploadFilePath + "" + uploadFileName);
+                            +uploadFilePath);
                 }
             });
 
@@ -268,8 +267,7 @@ public class PotoActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         public void run() {
 
-                            String msg = "File Upload Completed.\n\n See uploaded file here : \n\n"
-                                    +uploadFileName;
+                            String msg = "File Upload Completed.\n\n See uploaded file here : \n\n";
 
                             messageText.setText(msg);
                             Toast.makeText(PotoActivity.this, "File Upload Complete.",
